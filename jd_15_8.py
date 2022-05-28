@@ -5,6 +5,10 @@ import threading
 import time
 import requests,os
 import datetime
+'''
+cron: 59 8,11,14,17,19 * * *
+new Env('极速版15-8');
+'''
 
 '''
 #9.9秒杀
