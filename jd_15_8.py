@@ -35,12 +35,13 @@ log_list = []
 atime = 0
 title = '京东15-8抢券成功'
 content = []
+log_host = "10.0.8.11:5899"
 
 def get_log_list(num):
     global log_list
     try:
         for i in range(num):
-            url = f'http://127.0.0.1:5889/log'
+            url = "http://" + str(log_host) + "/log"
             res = requests.get(url=url).json()
             log_list.append(res)
     except:
