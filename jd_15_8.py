@@ -33,13 +33,8 @@ range_n = 25  # 线程个数25
 range_sleep = 0.04  # 间隔时间
 log_list = []
 atime = 0
-PUSH_PLUS_TOKEN = ''
 title = '京东15-8抢券成功'
 content = []
-
-if "PUSH_PLUS_TOKEN" in os.environ and len(os.environ["PUSH_PLUS_TOKEN"]) > 1:
-    PUSH_PLUS_TOKEN = os.environ["PUSH_PLUS_TOKEN"]
-
 
 def get_log_list(num):
     global log_list
@@ -131,34 +126,6 @@ def use_thread(cookie, index):
                 task.join()
             break
 
-# push推送
-def push_plus_bot(title, content):
-    try:
-        print("\n")
-        if not PUSH_PLUS_TOKEN:
-            print("PUSHPLUS服务的token未设置!!\n取消推送")
-            return
-        print("PUSHPLUS服务启动")
-        url = 'http://pushplus.plus/send'
-        data = {
-            "token": PUSH_PLUS_TOKEN,
-            "title": title,
-            "content": content
-        }
-        body = json.dumps(data).encode(encoding='utf-8')
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(url=url, data=body, headers=headers).json()
-        if response['code'] == 200:
-            print('推送成功！')
-        else:
-            print('推送失败！')
-            print(response)
-
-    except Exception as e:
-        print(e)
-
-
-
 
 if __name__ == '__main__':
     print('极速版抢券准备...')
@@ -191,12 +158,5 @@ if __name__ == '__main__':
             t.start()
         for t in threads:
             t.join()
-
     else:
         print('暂无可用log')
-
-    #发送通知
-    if '成功' in content:
-        push_plus_bot(title, content)
-    else:
-        print('抢券失败')
