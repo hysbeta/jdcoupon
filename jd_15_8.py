@@ -27,22 +27,10 @@ key=CB80DDB21929DB2DB9849A60F929CCB99B3BF927A75E71562ADB7CEC61846545338F6E4517C1
 
 # 可以改的参数
 args = 'key=DDF1B71D0AF91A8547973CE5362A890F18C8E73AAC10BA9179CE5D2D745E95AC9AC125029761397270C947AC9F5E11CE_bingo,roleId=3FE9EECAAA41B666E4FFAF79F20E2112EC5A32B22271AD04523B3C66AE5807591E0DB913F0F40F86F97AAA49D12C568D47FEEE50418AD25C6B23D81C476A40CB07BCCE74C4EDAD2E0D1BCF515F06DECE783A16EA99A0959CAC63BDF9BD9A9037450AB25EE84616EF9E65486A529F6690F93EA6903FF6754FD22FD39B43821B0041487D3996E0CF72C487DD107C4D0F13EA507700B35B495859747F1E700186EA385A46F6ED361FE40B11663D21263EB1_bingo,strengthenKey=4C8818C1732D1A7B9733D611F28BD8B57923ADE220C9B60370F65B533E02E0F823A5E9624E2105020B0FB67EE3BFC671_bingo'
-
-
-mycookies = [
-    'pt_key=11;pt_pin=111;',
-    'pt_key=22;pt_pin=222;',
-    'pt_key=33;pt_pin=333;'
-]
-
-
 starttime = 0  
-
 delay_time = 0.2
-range_n = 25  # 线程个数20
+range_n = 25  # 线程个数25
 range_sleep = 0.04  # 间隔时间
-
-# 没用的参数
 log_list = []
 atime = 0
 PUSH_PLUS_TOKEN = ''
@@ -174,8 +162,10 @@ def push_plus_bot(title, content):
 
 if __name__ == '__main__':
     print('极速版抢券准备...')
-    cookie_list=os.environ["JD_COOKIE"].split('&')
-    print(str(cookie_list))
+    mycookies = os.environ["JD_COOKIE"].split('&')
+    if len(mycookies) < 1:
+        raise Exception("无有效Cookies，请检查")
+    print("共有"+str(len(mycookies))+"个Cookies准备执行")
     h = (datetime.datetime.now()+datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H")   +":00:00"
     print ("now time=",(datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S") )
     print ("下一个整点是：", h )
