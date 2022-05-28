@@ -174,7 +174,8 @@ def push_plus_bot(title, content):
 
 if __name__ == '__main__':
     print('极速版抢券准备...')
-
+    cookie_list=os.environ["JD_COOKIE"].split('&')
+    print(str(cookie_list))
     h = (datetime.datetime.now()+datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H")   +":00:00"
     print ("now time=",(datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S") )
     print ("下一个整点是：", h )
