@@ -140,7 +140,7 @@ if __name__ == '__main__':
     print ("now time=",(datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S") )
     print ("下一个整点是：", h )
     #mktime返回秒数时间戳
-    starttime =int( time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 100000000
+    starttime =int( time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
     print("time stamp=",starttime)
     while True:
         if starttime - int(time.time() * 1000) <= 180000:
