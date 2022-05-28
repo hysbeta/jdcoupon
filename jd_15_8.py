@@ -6,7 +6,7 @@ import time
 import requests,os
 import datetime
 '''
-cron: 59 8,11,14,17,19 * * *
+cron: 58 8,11,14,17,19 * * *
 new Env('极速版15-8');
 '''
 
