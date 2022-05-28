@@ -6,7 +6,7 @@ import time
 import requests,os
 import datetime
 '''
-cron: 58 8,11,14,17,19 * * *
+cron: 56 8,11,14,17,19 * * *
 new Env('极速版15-8');
 '''
 
@@ -39,13 +39,15 @@ log_host = "10.0.8.11:15899"
 
 def get_log_list(num):
     global log_list
+    print("准备获取log, 数量" + str(num))
     try:
         for i in range(num):
-            url = "http://" + str(log_host) + "/log"
-            res = requests.get(url=url).json()
-            log_list.append(res)
+            url = "http://" + str(log_host) + "/batchLog?count=" + str(num)
+            log_list = requests.get(url=url).json()
     except:
         log_list = []
+    if len(log_list) == num:
+        print("获取log成功！")
     return log_list
 
 
@@ -133,13 +135,15 @@ if __name__ == '__main__':
     mycookies = os.environ["JD_COOKIE"].split('&')
     if len(mycookies) < 1:
         raise Exception("无有效Cookies，请检查")
+    if len(mycookies) > 6:
+        mycookies = mycookies[:6]
     print("共有"+str(len(mycookies))+"个Cookies准备执行")
     h = (datetime.datetime.now()+datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H")   +":00:00"
     print ("now time=",(datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S") )
     print ("下一个整点是：", h )
     #mktime返回秒数时间戳
     starttime =int( time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
-    print("time stamp=",starttime)        
+    print("time stamp=",starttime)
     while True:
         if starttime - int(time.time() * 1000) <= 180000:
             break
@@ -147,7 +151,7 @@ if __name__ == '__main__':
             if int(time.time() * 1000) - atime >= 30000:
                 atime = int(time.time() * 1000)
                 print(f'等待获取log中，还差{int((starttime - int(time.time() * 1000)) / 1000)}秒')
-    get_log_list(len(mycookies) * 50)
+    get_log_list(len(mycookies) * 1)
     if len(log_list) != 0:
         print(f'{len(log_list)}条log获取完毕')
         threads = []
