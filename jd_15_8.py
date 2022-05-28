@@ -35,7 +35,7 @@ log_list = []
 atime = 0
 title = '京东15-8抢券成功'
 content = []
-log_host = "10.0.8.11:5899"
+log_host = "10.0.8.11:15899"
 
 def get_log_list(num):
     global log_list
