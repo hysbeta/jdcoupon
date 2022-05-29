@@ -30,7 +30,7 @@ args = 'key=DDF1B71D0AF91A8547973CE5362A890F18C8E73AAC10BA9179CE5D2D745E95AC9AC1
 starttime = 0  
 delay_time = 0.2
 range_n = 25  # 线程个数25
-range_sleep = 0.04  # 间隔时间
+range_sleep = 0.02  # 间隔时间
 log_list = []
 atime = 0
 title = '京东15-8抢券成功'
