@@ -145,50 +145,52 @@ def use_thread(cookie, index):
 
 
 if __name__ == '__main__':
-    print('极速版抢券准备...')
-    mycookies = os.environ["JD_COOKIE"].split('&')
-    if len(mycookies) < 1:
-        raise Exception("无有效Cookies，请检查")
-    elif len(mycookies) > 6:
-        mycookies = mycookies[:6]
-    print("共有" + str(len(mycookies)) + "个Cookies准备执行")
-    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    today_timestamp = int(time.mktime(today.timetuple()) * 1000)
-    tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-    tomorrow_timestamp = int(time.mktime(tomorrow.timetuple()) * 1000)
-    mycookies = check_coupon(mycookies, coupon_desc)
-    if len(mycookies) < 1:
-        raise Exception("所有Cookies今日均已抢到券，休息啦~")
-    else:
-        print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
-    h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
-    print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
-    print("下一个整点是：", h)
-    # mktime返回秒数时间戳
-    starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
-    print("time stamp=", starttime)
-    while True:
-        if starttime - int(time.time() * 1000) <= 180000:
-            break
+    print(coupon_desc[0] + "抢" + coupon_desc[1] + "券开始！")
+    try:
+        mycookies = os.environ["JD_COOKIE"].split('&')
+        if len(mycookies) < 1:
+            raise Exception("无有效Cookies，请检查")
+        elif len(mycookies) > 6:
+            mycookies = mycookies[:6]
+        print("共有" + str(len(mycookies)) + "个Cookies准备执行")
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_timestamp = int(time.mktime(today.timetuple()) * 1000)
+        tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        tomorrow_timestamp = int(time.mktime(tomorrow.timetuple()) * 1000)
+        mycookies = check_coupon(mycookies, coupon_desc)
+        if len(mycookies) < 1:
+            raise Exception("所有Cookies今日均已抢到券，休息啦~")
         else:
-            if int(time.time() * 1000) - atime >= 30000:
-                atime = int(time.time() * 1000)
-                print(f'等待获取log中，还差{int((starttime - int(time.time() * 1000)) / 1000)}秒')
-    get_log_list(len(mycookies) * 50)
-    if len(log_list) != 0:
-        print(f'{len(log_list)}条log获取完毕')
-        threads = []
-        for i in range(len(mycookies)):
-            threads.append(
-                threading.Thread(target=use_thread, args=(mycookies[i], i))
-            )
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-    else:
-        print('暂无可用log')
-    print("="*30)
-    print("共计" + str(len(content)) + "个帐号在本轮抢到券")
-    for c in content:
-        print(str(c))
+            print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+        h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
+        print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
+        print("下一个整点是：", h)
+        # mktime返回秒数时间戳
+        starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
+        print("time stamp=", starttime)
+        while True:
+            if starttime - int(time.time() * 1000) <= 180000:
+                break
+            else:
+                if int(time.time() * 1000) - atime >= 30000:
+                    atime = int(time.time() * 1000)
+                    print(f'等待获取log中，还差{int((starttime - int(time.time() * 1000)) / 1000)}秒')
+        get_log_list(len(mycookies) * 50)
+        if len(log_list) != 0:
+            print(f'{len(log_list)}条log获取完毕')
+            threads = []
+            for i in range(len(mycookies)):
+                threads.append(
+                    threading.Thread(target=use_thread, args=(mycookies[i], i))
+                )
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+        else:
+            raise Exception("暂无可用log，请检查后端是不是炸了。。。")
+        print("共计" + str(len(content)) + "/" + str(len(mycookies)) + "个帐号在本轮抢到券~")
+        for c in content:
+            print(str(c))
+    except Exception as e:
+        print(str(e))
