@@ -150,4 +150,7 @@ if __name__ == '__main__':
             t.join()
     else:
         print('暂无可用log')
-    print(str(content))
+    print("="*30)
+    print("共计"len(content)+"个帐号在本轮抢到券")
+    for c in content:
+        print(str(c))
