@@ -6,6 +6,7 @@ import threading
 import time
 import os
 import requests
+requests.packages.urllib3.disable_warnings()
 
 '''
 cron: 56 8,11,14,17,19 * * *
@@ -13,6 +14,7 @@ new Env('极速版15-8');
 '''
 
 # 可以改的参数
+coupon_desc = ['极速版', '15-8']
 args = 'key=DDF1B71D0AF91A8547973CE5362A890F18C8E73AAC10BA9179CE5D2D745E95AC9AC125029761397270C947AC9F5E11CE_bingo,roleId=3FE9EECAAA41B666E4FFAF79F20E2112EC5A32B22271AD04523B3C66AE5807591E0DB913F0F40F86F97AAA49D12C568D47FEEE50418AD25C6B23D81C476A40CB07BCCE74C4EDAD2E0D1BCF515F06DECE783A16EA99A0959CAC63BDF9BD9A9037450AB25EE84616EF9E65486A529F6690F93EA6903FF6754FD22FD39B43821B0041487D3996E0CF72C487DD107C4D0F13EA507700B35B495859747F1E700186EA385A46F6ED361FE40B11663D21263EB1_bingo,strengthenKey=4C8818C1732D1A7B9733D611F28BD8B57923ADE220C9B60370F65B533E02E0F823A5E9624E2105020B0FB67EE3BFC671_bingo'
 starttime = 0
 delay_time = 0.2
@@ -23,6 +25,32 @@ atime = 0
 content = []
 log_host = "10.0.8.11:15899"
 
+def check_coupon(mycookies, coupon_desc):
+    new_mycookies = []
+    for cookies in mycookies:
+        NeedtoAdd = True
+        try:
+            url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
+            headers = {
+                'authority': 'wq.jd.com',
+                "User-Agent": "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+                'accept': '*/*',
+                'referer': 'https://wqs.jd.com/',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'cookie': cookies
+            }
+            res = requests.get(url, headers=headers, verify=False, timeout=10)
+            res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
+            coupon_list = res['coupon']['useable']
+            for coupon in coupon_list:
+                if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and int(
+                        coupon['beginTime']) >= today_timestamp:
+                    NeedtoAdd = False
+        except:
+            pass
+        if NeedtoAdd:
+            new_mycookies.append(cookies)
+    return new_mycookies
 
 def get_log_list(num):
     global log_list
@@ -121,9 +149,18 @@ if __name__ == '__main__':
     mycookies = os.environ["JD_COOKIE"].split('&')
     if len(mycookies) < 1:
         raise Exception("无有效Cookies，请检查")
-    if len(mycookies) > 6:
+    elif len(mycookies) > 6:
         mycookies = mycookies[:6]
     print("共有" + str(len(mycookies)) + "个Cookies准备执行")
+    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_timestamp = int(time.mktime(today.timetuple()) * 1000)
+    tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    tomorrow_timestamp = int(time.mktime(tomorrow.timetuple()) * 1000)
+    mycookies = check_coupon(mycookies, coupon_desc)
+    if len(mycookies) < 1:
+        raise Exception("所有Cookies今日均已抢到券，休息啦~")(mycookies, coupon_desc)
+    else:
+        print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
     h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
     print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
     print("下一个整点是：", h)
