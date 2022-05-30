@@ -163,11 +163,11 @@ if __name__ == '__main__':
         else:
             print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
         h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
-        print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
+        #print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
         # mktime返回秒数时间戳
         starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
-        print("time stamp=", starttime)
+        #print("time stamp=", starttime)
         while True:
             if starttime - int(time.time() * 1000) <= 180000:
                 break
