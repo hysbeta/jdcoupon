@@ -158,7 +158,7 @@ if __name__ == '__main__':
     tomorrow_timestamp = int(time.mktime(tomorrow.timetuple()) * 1000)
     mycookies = check_coupon(mycookies, coupon_desc)
     if len(mycookies) < 1:
-        raise Exception("所有Cookies均已有券，不抢啦~")(mycookies, coupon_desc)
+        raise Exception("所有Cookies今日均已抢到券，休息啦~")
     else:
         print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
     h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
