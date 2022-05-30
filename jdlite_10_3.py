@@ -43,7 +43,7 @@ def check_coupon(mycookies, coupon_desc):
             res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
             coupon_list = res['coupon']['useable']
             for coupon in coupon_list:
-                if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and int(
+                if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and tomorrow_timestamp >= int(
                         coupon['beginTime']) >= today_timestamp:
                     NeedtoAdd = False
         except:
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_timestamp = int(time.mktime(today.timetuple()) * 1000)
         tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        tomorrow_timestamp = int(time.mktime(tomorrow.timetuple()) * 1000)
+        tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 300)
         mycookies = check_coupon(mycookies, coupon_desc)
         if len(mycookies) < 1:
             raise Exception("所有Cookies今日均已抢到券，休息啦~")
