@@ -152,6 +152,6 @@ if __name__ == '__main__':
     else:
         print('暂无可用log')
     print("="*30)
-    print("共计"len(content)+"个帐号在本轮抢到券")
+    print("共计" + str(len(content)) + "个帐号在本轮抢到券")
     for c in content:
         print(str(c))
