@@ -103,12 +103,10 @@ def qiang_quan(cookie, i, index):
         res = requests.post(url=url, headers=headers, data=data).json()
         # print(res)
         if res['code'] == '0':
-            #print(f"账号{index + 1}：{res['subCodeMsg']}")
             if '成功' in res['subCodeMsg']:
                 content.append(f"账号{cookie[90:-1]}：{res['subCodeMsg']}")
         else:
             pass
-            #print(f"账号{index + 1}：{res['errmsg']}")
     except:
         pass
 
@@ -156,7 +154,7 @@ if __name__ == '__main__':
         today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_timestamp = int(time.mktime(today.timetuple()) * 1000)
         tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 300)
+        tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 3600)
         mycookies = check_coupon(mycookies, coupon_desc)
         if len(mycookies) < 1:
             raise Exception("所有Cookies今日均已抢到券，休息啦~")
