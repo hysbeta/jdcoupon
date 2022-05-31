@@ -103,12 +103,11 @@ def qiang_quan(cookie, i, index):
         res = requests.post(url=url, headers=headers, data=data).json()
         # print(res)
         if res['code'] == '0':
-            #print(f"账号{index + 1}：{res['subCodeMsg']}")
+            print(f"账号{index + 1}：{res['subCodeMsg']}")
             if '成功' in res['subCodeMsg']:
                 content.append(f"账号{cookie[90:-1]}：{res['subCodeMsg']}")
         else:
-            pass
-            #print(f"账号{index + 1}：{res['errmsg']}")
+            print(f"账号{index + 1}：{res['errmsg']}")
     except:
         pass
 
