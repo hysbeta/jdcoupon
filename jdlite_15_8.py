@@ -26,32 +26,37 @@ content = []
 log_host = os.environ["JDLITE"]
 print("当前正在使用log server："+str(log_host))
 
+
 def check_coupon(mycookies, coupon_desc):
     new_mycookies = []
     for cookies in mycookies:
         NeedtoAdd = True
-        try:
-            url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
-            headers = {
-                'authority': 'wq.jd.com',
-                "User-Agent": "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-                'accept': '*/*',
-                'referer': 'https://wqs.jd.com/',
-                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                'cookie': cookies
-            }
-            res = requests.get(url, headers=headers, verify=False, timeout=10)
-            res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
-            coupon_list = res['coupon']['useable']
-            for coupon in coupon_list:
-                if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and tomorrow_timestamp >= int(
-                        coupon['beginTime']) >= today_timestamp:
-                    NeedtoAdd = False
-        except:
+        if int(int(time.mktime(datetime.datetime.now().timetuple())) * 1000) < tomorrow_timestamp:
+            try:
+                url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
+                headers = {
+                    'authority': 'wq.jd.com',
+                    "User-Agent": "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+                    'accept': '*/*',
+                    'referer': 'https://wqs.jd.com/',
+                    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                    'cookie': cookies
+                }
+                res = requests.get(url, headers=headers, verify=False, timeout=10)
+                res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
+                coupon_list = res['coupon']['useable']
+                for coupon in coupon_list:
+                    if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and tomorrow_timestamp >= int(
+                            coupon['beginTime']) >= today_timestamp:
+                        NeedtoAdd = False
+            except:
+                pass
+        else:
             pass
         if NeedtoAdd:
             new_mycookies.append(cookies)
     return new_mycookies
+
 
 def get_log_list(num):
     global log_list
@@ -159,9 +164,11 @@ if __name__ == '__main__':
         tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 3600000)
         mycookies = check_coupon(mycookies, coupon_desc)
         if len(mycookies) < 1:
-            raise Exception("所有Cookies今日均已抢到券，休息啦~")
+            print("所有头部Cookies今日均已抢到券，来拉车友一把吧！")
+            mycookies = os.environ["JD_COOKIE"].split('&')
         else:
-            print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+            print("仍有"+str(len(mycookies))+"个头部cookies未抢到"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+        print("本轮共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
         h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
         #print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
