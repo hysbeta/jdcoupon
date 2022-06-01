@@ -29,24 +29,27 @@ def check_coupon(mycookies, coupon_desc):
     new_mycookies = []
     for cookies in mycookies:
         NeedtoAdd = True
-        try:
-            url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
-            headers = {
-                'authority': 'wq.jd.com',
-                "User-Agent": "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-                'accept': '*/*',
-                'referer': 'https://wqs.jd.com/',
-                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                'cookie': cookies
-            }
-            res = requests.get(url, headers=headers, verify=False, timeout=10)
-            res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
-            coupon_list = res['coupon']['useable']
-            for coupon in coupon_list:
-                if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and tomorrow_timestamp >= int(
-                        coupon['beginTime']) >= today_timestamp:
-                    NeedtoAdd = False
-        except:
+        if int(int(datetime.datetime.now().timetuple()) * 1000) < tomorrow_timestamp:
+            try:
+                url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
+                headers = {
+                    'authority': 'wq.jd.com',
+                    "User-Agent": "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+                    'accept': '*/*',
+                    'referer': 'https://wqs.jd.com/',
+                    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                    'cookie': cookies
+                }
+                res = requests.get(url, headers=headers, verify=False, timeout=10)
+                res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
+                coupon_list = res['coupon']['useable']
+                for coupon in coupon_list:
+                    if coupon_desc[0] in str(coupon) and coupon_desc[1] in str(coupon) and tomorrow_timestamp >= int(
+                            coupon['beginTime']) >= today_timestamp:
+                        NeedtoAdd = False
+            except:
+                pass
+        else:
             pass
         if NeedtoAdd:
             new_mycookies.append(cookies)
