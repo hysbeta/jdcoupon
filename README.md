@@ -1,10 +1,13 @@
 Get JDLite coupon
 
-#Todo
- - Use pin to select VIP cookies
+Usage:
+ 	ql repo https://github.com/hysbeta/jdcoupon.git "" "backup"
+  
+Todo
+ - Build a docker image for log server (export JDLITE="")
+ - Use pin to select VIP cookies (export JDLITE_VIP="ck1&ck2&ck3")
  - Make the function script as a lib to import
- - Build a docker image for log server
-
+  
 Thanks:
 
 https://github.com/abinnz/jdlite-server
