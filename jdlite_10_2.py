@@ -10,7 +10,7 @@ requests.packages.urllib3.disable_warnings()
 
 '''
 cron: 56 9,23 * * *
-new Env('极速版15-5');
+new Env('极速版10-2');
 '''
 
 # 可以改的参数
