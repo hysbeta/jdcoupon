@@ -23,7 +23,8 @@ range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
-log_host = "10.0.8.11:15899"
+log_host = os.environ["JDLITE"]
+print("当前正在使用log server："+str(log_host))
 
 def check_coupon(mycookies, coupon_desc):
     new_mycookies = []
@@ -56,7 +57,7 @@ def get_log_list(num):
     global log_list
     try:
         for i in range(num):
-            url = "http://" + str(log_host) + "/log"
+            url = str(log_host) + "/log"
             res = requests.get(url=url).json()
             log_list.append(res)
     except:
