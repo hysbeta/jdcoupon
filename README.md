@@ -3,6 +3,7 @@ Get JDLite coupon
 #Todo
  - Use pin to select VIP cookies
  - Make the function script as a lib to import
+ - Build a docker image for log server
 
 Thanks:
 
