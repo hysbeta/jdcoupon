@@ -19,7 +19,7 @@ args = 'key=DF6500A60EBB047C1539292254D320D7E80F9297D19486370D6A0DD220E76A1CD918
 starttime = 0
 delay_time = 0.2
 range_n = 25  # 线程个数25
-range_sleep = 0.02  # 间隔时间
+range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
@@ -29,7 +29,7 @@ def check_coupon(mycookies, coupon_desc):
     new_mycookies = []
     for cookies in mycookies:
         NeedtoAdd = True
-        if int(int(datetime.datetime.now().timetuple()) * 1000) < tomorrow_timestamp:
+        if int(int(time.mktime(datetime.datetime.now().timetuple())) * 1000) < tomorrow_timestamp:
             try:
                 url = f"https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state={1}&wxadd=1&filterswitch=1&_={int(time.time() * 1000)}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls"
                 headers = {
@@ -54,6 +54,7 @@ def check_coupon(mycookies, coupon_desc):
         if NeedtoAdd:
             new_mycookies.append(cookies)
     return new_mycookies
+
 
 def get_log_list(num):
     global log_list
