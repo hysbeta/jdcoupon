@@ -23,7 +23,9 @@ range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
-log_host = "10.0.8.11:15899"
+log_host = os.environ["JDLITE"]
+print("当前正在使用log server："+str(log_host))
+
 
 def check_coupon(mycookies, coupon_desc):
     new_mycookies = []
@@ -60,7 +62,7 @@ def get_log_list(num):
     global log_list
     try:
         for i in range(num):
-            url = "http://" + str(log_host) + "/log"
+            url = str(log_host) + "/log"
             res = requests.get(url=url).json()
             log_list.append(res)
     except:
@@ -162,9 +164,11 @@ if __name__ == '__main__':
         tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 3600000)
         mycookies = check_coupon(mycookies, coupon_desc)
         if len(mycookies) < 1:
-            raise Exception("所有Cookies今日均已抢到券，休息啦~")
+            print("所有头部Cookies今日均已抢到券，来拉车友一把吧！")
+            mycookies = os.environ["JD_COOKIE"].split('&')
         else:
-            print("共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+            print("仍有"+str(len(mycookies))+"个头部cookies未抢到"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+        print("本轮共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
         h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
         #print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
