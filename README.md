@@ -4,8 +4,8 @@ Usage:
  	ql repo https://github.com/hysbeta/jdcoupon.git "" "backup"
   
 Todo
- - Build a docker image for log server (export JDLITE="")
- - Use pin to select VIP cookies (export JDLITE_VIP="ck1&ck2&ck3")
+ - Build a docker image for log server (export JDLITE_LOG="")
+ - Use pin to select VIP cookies (export JDLITE_VIP="pin1&pin2&pin3") ok
  - Make the function script as a lib to import
   
 Thanks:
