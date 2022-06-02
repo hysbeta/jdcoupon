@@ -185,6 +185,7 @@ if __name__ == '__main__':
         get_log_list(len(mycookies) * 50)
         if len(log_list) != 0:
             print(f'{len(log_list)}条log获取完毕')
+            print(f'准备抢券，还差{int((starttime - int(time.time() * 1000)) / 1000)}秒')
             threads = []
             for i in range(len(mycookies)):
                 threads.append(
