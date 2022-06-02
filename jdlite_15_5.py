@@ -6,6 +6,7 @@ import threading
 import time
 import os
 import requests
+
 requests.packages.urllib3.disable_warnings()
 
 '''
@@ -19,17 +20,40 @@ args = 'key=6E3ED4217CA5BA50CC868072587749279A819E91EC8217F49BC1DB9DC674DA27CF93
 starttime = 0
 delay_time = 0.2
 range_n = 25  # 线程个数25
-range_sleep = 0.02  # 间隔时间
+range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
-log_host = os.environ["JDLITE"]
-print("当前正在使用log server："+str(log_host))
+log_host = os.environ["JDLITE_LOG"]
+print("当前正在使用log server：" + str(log_host))
 
 
-def check_coupon(mycookies, coupon_desc):
-    new_mycookies = []
-    for cookies in mycookies:
+def get_cookies(vip_select=True):
+    cookies_temp_arr = []
+    env_cookies = os.environ["JD_COOKIE"].split('&')
+    vip_pins = os.environ["JDLITE_VIP"].split("&")
+    if len(vip_pins) != 0 and vip_select:
+        print("VIP Pins:" + str(vip_pins))
+        for env_cookie in env_cookies:
+            for vip_pin in vip_pins:
+                if str(vip_pin) in str(env_cookie):
+                    cookies_temp_arr.append(env_cookie)
+                    break
+    else:
+        cookies_temp_arr = env_cookies
+    cookies_arr = filter_cookies(cookies_temp_arr)
+    if len(cookies_arr) == 0:
+        if not vip_select:
+            raise Exception("无有效Cookies，请检查。")
+        else:
+            print("所有VIPCookies今日均已抢到券，来拉一把其他车友吧！")
+            cookies_arr = get_cookies(False)
+    return cookies_arr
+
+
+def filter_cookies(cookies_temp_arr):
+    new_cookies_temp_arr = []
+    for cookies_temp in cookies_temp_arr:
         NeedtoAdd = True
         if int(int(time.mktime(datetime.datetime.now().timetuple())) * 1000) < tomorrow_timestamp:
             try:
@@ -40,7 +64,7 @@ def check_coupon(mycookies, coupon_desc):
                     'accept': '*/*',
                     'referer': 'https://wqs.jd.com/',
                     'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                    'cookie': cookies
+                    'cookie': cookies_temp
                 }
                 res = requests.get(url, headers=headers, verify=False, timeout=10)
                 res = json.loads(res.text.replace("try{ jsonpCBKB(", "").replace("\n);}catch(e){}", ""))
@@ -54,8 +78,8 @@ def check_coupon(mycookies, coupon_desc):
         else:
             pass
         if NeedtoAdd:
-            new_mycookies.append(cookies)
-    return new_mycookies
+            new_cookies_temp_arr.append(cookies_temp)
+    return new_cookies_temp_arr
 
 
 def get_log_list(num):
@@ -152,29 +176,19 @@ def use_thread(cookie, index):
 if __name__ == '__main__':
     print(coupon_desc[0] + "抢" + coupon_desc[1] + "券开始！")
     try:
-        mycookies = os.environ["JD_COOKIE"].split('&')
-        if len(mycookies) < 1:
-            raise Exception("无有效Cookies，请检查")
-        elif len(mycookies) > 6:
-            mycookies = mycookies[:6]
-        print("共有" + str(len(mycookies)) + "个Cookies准备执行")
         today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_timestamp = int(time.mktime(today.timetuple()) * 1000)
-        tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0,
+                                                                                  microsecond=0)
         tomorrow_timestamp = int(int(time.mktime(tomorrow.timetuple()) * 1000) - 3600000)
-        mycookies = check_coupon(mycookies, coupon_desc)
-        if len(mycookies) < 1:
-            print("所有头部Cookies今日均已抢到券，来拉车友一把吧！")
-            mycookies = os.environ["JD_COOKIE"].split('&')
-        else:
-            print("仍有"+str(len(mycookies))+"个头部cookies未抢到"+coupon_desc[0]+" "+coupon_desc[1]+"券")
-        print("本轮共有"+str(len(mycookies))+"个cookies需要抢"+coupon_desc[0]+" "+coupon_desc[1]+"券")
+        mycookies = get_cookies()
+        print("本轮共有" + str(len(mycookies)) + "个cookies需要抢" + coupon_desc[0] + " " + coupon_desc[1] + "券")
         h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
-        #print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
+        # print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
         # mktime返回秒数时间戳
         starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
-        #print("time stamp=", starttime)
+        # print("time stamp=", starttime)
         while True:
             if starttime - int(time.time() * 1000) <= 180000:
                 break
