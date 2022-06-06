@@ -163,7 +163,7 @@ def use_thread(cookie, index):
     while True:
         # jdtime>=starttime时启动
         if jdtime() >= starttime:
-            # starttime提前一秒，所以需要加上延迟
+            # starttime提前2秒，所以需要加上延迟
             time.sleep(delay_time)
             for task in tasks:
                 task.start()
@@ -187,7 +187,7 @@ if __name__ == '__main__':
         # print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
         # mktime返回秒数时间戳
-        starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 1000
+        starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 2000
         # print("time stamp=", starttime)
         while True:
             if starttime - int(time.time() * 1000) <= 180000:
