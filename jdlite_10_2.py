@@ -26,28 +26,29 @@ atime = 0
 content = []
 log_host = os.environ["JDLITE_LOG"]
 print("当前正在使用log server：" + str(log_host))
+vip_pins = os.environ["JDLITE_VIP"].split("&")
+other_pins = os.environ["JDLITE_OTHER"].split("&")
 
 
-def get_cookies(vip_select=True):
+def get_cookies(pin_list=vip_pins, second_round=False):
     cookies_temp_arr = []
     env_cookies = os.environ["JD_COOKIE"].split('&')
-    vip_pins = os.environ["JDLITE_VIP"].split("&")
-    if len(vip_pins) != 0 and vip_select:
-        print("VIP Pins:" + str(vip_pins))
+    if len(pin_list) != 0:
+        print("Selected Pins:" + str(pin_list))
         for env_cookie in env_cookies:
-            for vip_pin in vip_pins:
-                if str(vip_pin) in str(env_cookie):
+            for pin in pin_list:
+                if str(pin) in str(env_cookie):
                     cookies_temp_arr.append(env_cookie)
                     break
     else:
         cookies_temp_arr = env_cookies
     cookies_arr = filter_cookies(cookies_temp_arr)
     if len(cookies_arr) == 0:
-        if not vip_select:
+        if second_round:
             raise Exception("无有效Cookies，请检查。")
         else:
-            print("所有VIPCookies今日均已抢到券，来拉一把其他车友吧！")
-            cookies_arr = get_cookies(False)
+            print(str(pin_list)+"今日均已抢到券，来拉一把"+str(other_pins))
+            cookies_arr = get_cookies(pin_list=other_pins, second_round=True)
     return cookies_arr
 
 
