@@ -25,9 +25,9 @@ log_list = []
 atime = 0
 content = []
 log_host = os.environ["JDLITE_LOG"]
+print("当前正在使用log server：" + str(log_host))
 vip_pins = os.environ["JDLITE_VIP"].split("&")
 other_pins = os.environ["JDLITE_OTHER"].split("&")
-print("当前正在使用log server：" + str(log_host))
 
 
 def get_cookies(pin_list=vip_pins, second_round=False):
