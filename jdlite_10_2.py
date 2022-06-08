@@ -10,7 +10,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 '''
-cron: 56 9,23 * * *
+cron: 58 9,23 * * *
 new Env('极速版10-2');
 '''
 
@@ -20,7 +20,7 @@ args = 'key=DF6500A60EBB047C1539292254D320D7E80F9297D19486370D6A0DD220E76A1CD918
 starttime = 0
 delay_time = 0.2
 range_n = 25  # 线程个数25
-range_sleep = 0.01  # 间隔时间
+range_sleep = 0.04  # 间隔时间
 log_list = []
 atime = 0
 content = []
