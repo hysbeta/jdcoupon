@@ -164,6 +164,7 @@ def use_thread(cookie, index):
     print(f'账号{index + 1}：等待抢券')
     while True:
         # jdtime>=starttime时启动
+        nowtime = jdtime()
         if jdtime() >= starttime:
             # starttime提前2秒，所以需要加上延迟
             time.sleep(delay_time)
