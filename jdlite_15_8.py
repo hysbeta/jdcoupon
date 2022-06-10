@@ -144,16 +144,17 @@ def qiang_quan(cookie, i, index):
 
 
 def jdtime():
-    url = 'http://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
-    headers = {
-        "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'
-    }
-
-    try:
-        res = requests.get(url=url, headers=headers, timeout=1).json()
-        return int(res['currentTime2'])
-    except:
-        return 0
+    # url = 'http://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
+    # headers = {
+    #     "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'
+    # }
+    # 
+    # try:
+    #     res = requests.get(url=url, headers=headers, timeout=1).json()
+    #     return int(res['currentTime2'])
+    # except:
+    # print("无法获取京东时间，取用本机时间。")
+    return int(time.mktime(datetime.datetime.now().timetuple())) * 1000
 
 
 def use_thread(cookie, index):
@@ -163,7 +164,8 @@ def use_thread(cookie, index):
     print(f'账号{index + 1}：等待抢券')
     while True:
         # jdtime>=starttime时启动
-        if jdtime() >= starttime:
+        nowtime = jdtime()
+        if nowtime >= starttime:
             # starttime提前2秒，所以需要加上延迟
             time.sleep(delay_time)
             for task in tasks:
@@ -172,6 +174,8 @@ def use_thread(cookie, index):
             for task in tasks:
                 task.join()
             break
+        else:
+            print("还差"str(int(starttime-nowtime))+"秒")
 
 
 if __name__ == '__main__':
