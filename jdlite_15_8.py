@@ -20,7 +20,7 @@ args = 'key=4C884367B622BB96ABD488103A5036F58B08100D4FEC967D97AA8854BC13AF4A50BE
 starttime = 0
 delay_time = 0.2
 range_n = 25  # 线程个数25
-range_sleep = 0.04  # 间隔时间
+range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
