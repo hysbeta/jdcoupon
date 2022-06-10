@@ -174,8 +174,6 @@ def use_thread(cookie, index):
             for task in tasks:
                 task.join()
             break
-        else:
-            print("还差"+str(int((starttime-nowtime)/1000))+"秒")
 
 
 if __name__ == '__main__':
