@@ -18,9 +18,8 @@ new Env('极速版15-8');
 coupon_desc = ['极速版', '15-8']
 args = 'key=4C884367B622BB96ABD488103A5036F58B08100D4FEC967D97AA8854BC13AF4A50BE6F7B01529B9D56C52BEAB5EB5235_bingo,roleId=A921D0996A757D3D319487D17C0F25FE701307BE103D49F3D1562C7CF5D02F01F1043E437093D585B4730F630A66804F8AE429E9F2C40EE1F0580E482F388FEEF1F5A8A69753844555247364707E6E41C09357472BB35A0DBA4FFB51DC744FEF090872EE7FCDC1D2952805831215DBDC1F56CC5262869F020F7EBEDC2DC555D34FB1E52B0D14AD8AE8F3A33BDC3F74C9ECC644AC0C29735D1B8BD35DD51E31377BF66B98B6FC4599023E3E6287B0FEA8_bingo,strengthenKey=E8E56EB51AE56ECF5121EE171790818A6B77F66338E575E8332C91F256220354761E603A9797D0777E4E458B9F116BD3_bingo'
 starttime = 0
-delay_time = 0.2
+starttime_offset = 3
 range_n = 25  # 线程个数25
-range_sleep = 0.01  # 间隔时间
 log_list = []
 atime = 0
 content = []
@@ -47,7 +46,7 @@ def get_cookies(pin_list=vip_pins, second_round=False):
         if second_round:
             raise Exception("无有效Cookies，请检查。")
         else:
-            print(str(pin_list)+"今日均已抢到券，来拉一把"+str(other_pins))
+            print(str(pin_list) + "今日均已抢到券，来拉一把" + str(other_pins))
             cookies_arr = get_cookies(pin_list=other_pins, second_round=True)
     return cookies_arr
 
@@ -144,17 +143,20 @@ def qiang_quan(cookie, i, index):
 
 
 def jdtime():
-    # url = 'http://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
-    # headers = {
-    #     "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'
-    # }
-    # 
-    # try:
-    #     res = requests.get(url=url, headers=headers, timeout=1).json()
-    #     return int(res['currentTime2'])
-    # except:
-    # print("无法获取京东时间，取用本机时间。")
-    return int(time.mktime(datetime.datetime.now().timetuple())) * 1000
+    url = 'http://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
+    headers = {
+        "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'
+    }
+    try:
+        index = 0
+        while index < 3:
+            res = requests.get(url=url, headers=headers, timeout=1).json()
+            if 'currentTime2' in res:
+                return int(res['currentTime2'])
+            index += 1
+        return int(round(time.time() * 1000))
+    except:
+        return int(round(time.time() * 1000))
 
 
 def use_thread(cookie, index):
@@ -163,14 +165,10 @@ def use_thread(cookie, index):
         tasks.append(threading.Thread(target=qiang_quan, args=(cookie, index * 50 + i, index)))
     print(f'账号{index + 1}：等待抢券')
     while True:
-        # jdtime>=starttime时启动
         nowtime = jdtime()
         if nowtime >= starttime:
-            # starttime提前2秒，所以需要加上延迟
-            time.sleep(delay_time)
             for task in tasks:
                 task.start()
-                time.sleep(range_sleep)
             for task in tasks:
                 task.join()
             break
@@ -187,11 +185,8 @@ if __name__ == '__main__':
         mycookies = get_cookies()
         print("本轮共有" + str(len(mycookies)) + "个cookies需要抢" + coupon_desc[0] + " " + coupon_desc[1] + "券")
         h = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H") + ":00:00"
-        # print("now time=", (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S"))
         print("下一个整点是：", h)
-        # mktime返回秒数时间戳
-        starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - 2000
-        # print("time stamp=", starttime)
+        starttime = int(time.mktime(time.strptime(h, "%Y-%m-%d %H:%M:%S")) * 1000) - starttime_offset * 1000
         while True:
             if starttime - int(time.time() * 1000) <= 180000:
                 break
