@@ -10,7 +10,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 '''
-cron: 56 8,11,14,17,19 * * *
+cron: 56 8,11,15,19,23 * * *
 new Env('极速版9月39-8');
 '''
 
